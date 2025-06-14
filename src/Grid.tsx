@@ -4,14 +4,30 @@ import { useSwipeable } from "react-swipeable";
 
 export default function Grid() {
   const [grid, setGrid] = useState<number[][]>([
-    [0, 0, 2, 0],
+    [2, 0, 2, 0],
     [0, 0, 0, 0],
     [0, 0, 0, 0],
     [0, 0, 2, 0],
   ]);
 
   function onSwipeLeft() {
-    console.log("you swiped left !");
+    setGrid((prevGrid) => {
+      const newGrid = prevGrid.map((row) => {
+        let newRow = row.filter((v) => v !== 0);
+        for (let i = 0; i < newRow.length - 1; i++) {
+          if (newRow[i] === newRow[i + 1]) {
+            newRow[i] *= 2;
+            newRow[i + 1] = 0;
+          }
+        }
+        newRow = newRow.filter((v) => v !== 0);
+        while (newRow.length < row.length) {
+          newRow.push(0);
+        }
+        return newRow;
+      });
+      return newGrid;
+    });
   }
 
   function onSwipeRight() {
