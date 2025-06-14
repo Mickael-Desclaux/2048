@@ -31,7 +31,23 @@ export default function Grid() {
   }
 
   function onSwipeRight() {
-    console.log("you swiped right !");
+    setGrid((prevGrid) => {
+      const newGrid = prevGrid.map((row) => {
+        let newRow = row.filter((v) => v !== 0);
+        for (let i = newRow.length; i > 0; i--) {
+          if (newRow[i] === newRow[i - 1]) {
+            newRow[i] *= 2;
+            newRow[i - 1] = 0;
+          }
+        }
+        newRow = newRow.filter((v) => v !== 0);
+        while (newRow.length < row.length) {
+          newRow.unshift(0);
+        }
+        return newRow;
+      });
+      return newGrid;
+    });
   }
 
   function onSwipeUp() {
