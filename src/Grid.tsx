@@ -4,10 +4,10 @@ import { useSwipeable } from "react-swipeable";
 
 export default function Grid() {
   const [grid, setGrid] = useState<number[][]>([
-    [2, 0, 2, 0],
-    [0, 0, 0, 0],
+    [4, 2, 4, 2],
     [0, 0, 0, 0],
     [0, 0, 2, 0],
+    [0, 0, 2, 2],
   ]);
 
   function onSwipeLeft() {
@@ -50,12 +50,56 @@ export default function Grid() {
     });
   }
 
+  function transpose(grid: number[][]): number[][] {
+    return grid[0].map((_, colIndex) => grid.map((row) => row[colIndex]));
+  }
+
   function onSwipeUp() {
-    console.log("you swiped up !");
+    setGrid((prevGrid) => {
+      const transposed = transpose(prevGrid);
+
+      const moved = transposed.map((col) => {
+        let newCol = col.filter((v) => v !== 0);
+        for (let i = 0; i < newCol.length - 1; i++) {
+          if (newCol[i] === newCol[i + 1]) {
+            newCol[i] *= 2;
+            newCol[i + 1] = 0;
+          }
+        }
+        newCol = newCol.filter((v) => v !== 0);
+        while (newCol.length < col.length) {
+          newCol.push(0);
+        }
+        return newCol;
+      });
+
+      const result = transpose(moved);
+      return result;
+    });
   }
 
   function onSwipeDown() {
-    console.log("you swiped down !");
+    setGrid((prevGrid) => {
+      const transposed = transpose(prevGrid);
+
+      const moved = transposed.map((col) => {
+        let newCol = col.filter((v) => v !== 0);
+        for (let i = newCol.length; i > 0; i--) {
+          if (newCol[i] === newCol[i - 1]) {
+            newCol[i] *= 2;
+            newCol[i - 1] = 0;
+          }
+        }
+        newCol = newCol.filter((v) => v !== 0);
+        while (newCol.length < col.length) {
+          newCol.unshift(0);
+        }
+        return newCol;
+      });
+
+      const result = transpose(moved);
+      return result;
+    });
   }
 
   const handlers = useSwipeable({
