@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Title from "./Title";
 import { useSwipeable } from "react-swipeable";
 
@@ -9,6 +9,41 @@ export default function Grid() {
     [0, 0, 2, 0],
     [0, 0, 2, 2],
   ]);
+  const [hasMoved, setHasMoved] = useState(false);
+
+  useEffect(() => {
+    if (hasMoved) {
+      generateNewTitle();
+      setHasMoved(false);
+    }
+  }, [hasMoved]);
+
+  function generateNewTitle() {
+    const newTitleValue = Math.floor(Math.random() * 10) + 1 === 10 ? 4 : 2;
+
+    setGrid((prevGrid) => {
+      const flatGrid = prevGrid.flat();
+
+      const emptyIndexes = flatGrid
+        .map((val, index) => (val === 0 ? index : -1))
+        .filter((index) => index !== -1);
+
+      if (emptyIndexes.length === 0) {
+        return prevGrid;
+      }
+
+      const randomIndex =
+        emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)];
+      flatGrid[randomIndex] = newTitleValue;
+
+      const newGrid = [];
+      for (let i = 0; i < flatGrid.length; i += 4) {
+        newGrid.push(flatGrid.slice(i, i + 4));
+      }
+
+      return newGrid;
+    });
+  }
 
   function onSwipeLeft() {
     setGrid((prevGrid) => {
@@ -26,6 +61,7 @@ export default function Grid() {
         }
         return newRow;
       });
+      setHasMoved(true);
       return newGrid;
     });
   }
@@ -46,6 +82,7 @@ export default function Grid() {
         }
         return newRow;
       });
+      setHasMoved(true);
       return newGrid;
     });
   }
@@ -74,6 +111,7 @@ export default function Grid() {
       });
 
       const result = transpose(moved);
+      setHasMoved(true);
       return result;
     });
   }
@@ -98,6 +136,7 @@ export default function Grid() {
       });
 
       const result = transpose(moved);
+      setHasMoved(true);
       return result;
     });
   }
