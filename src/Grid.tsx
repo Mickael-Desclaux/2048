@@ -34,6 +34,10 @@ function checkGameOver(grid: number[][]): boolean {
   return !canMove(grid);
 }
 
+function gridsAreEqual(grid1: number[][], grid2: number[][]): boolean {
+  return grid1.every((row, i) => row.every((cell, j) => cell === grid2[i][j]));
+}
+
 export default function Grid() {
   const [grid, setGrid] = useState<number[][]>([
     [4, 2, 4, 2],
@@ -62,7 +66,6 @@ export default function Grid() {
 
     setGrid((prevGrid) => {
       const flatGrid = prevGrid.flat();
-      console.log("🚀 ~ setGrid ~ flatGrid:", flatGrid);
 
       const emptyIndexes = flatGrid
         .map((val, index) => (val === 0 ? index : -1))
@@ -101,7 +104,9 @@ export default function Grid() {
         }
         return newRow;
       });
-      setHasMoved(true);
+      if (!gridsAreEqual(newGrid, prevGrid)) {
+        setHasMoved(true);
+      }
       return newGrid;
     });
   }
@@ -122,7 +127,9 @@ export default function Grid() {
         }
         return newRow;
       });
-      setHasMoved(true);
+      if (!gridsAreEqual(newGrid, prevGrid)) {
+        setHasMoved(true);
+      }
       return newGrid;
     });
   }
@@ -151,7 +158,9 @@ export default function Grid() {
       });
 
       const result = transpose(moved);
-      setHasMoved(true);
+      if (!gridsAreEqual(result, prevGrid)) {
+        setHasMoved(true);
+      }
       return result;
     });
   }
@@ -176,7 +185,9 @@ export default function Grid() {
       });
 
       const result = transpose(moved);
-      setHasMoved(true);
+      if (!gridsAreEqual(result, prevGrid)) {
+        setHasMoved(true);
+      }
       return result;
     });
   }
