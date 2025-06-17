@@ -34,6 +34,10 @@ function checkGameOver(grid: number[][]): boolean {
   return !canMove(grid);
 }
 
+function checkWin(grid: number[][]): boolean {
+  return grid.flat().includes(2048);
+}
+
 function gridsAreEqual(grid1: number[][], grid2: number[][]): boolean {
   return grid1.every((row, i) => row.every((cell, j) => cell === grid2[i][j]));
 }
@@ -41,12 +45,13 @@ function gridsAreEqual(grid1: number[][], grid2: number[][]): boolean {
 export default function Grid() {
   const [grid, setGrid] = useState<number[][]>([
     [4, 2, 4, 2],
-    [0, 0, 0, 0],
-    [0, 0, 2, 0],
+    [0, 1024, 0, 0],
+    [0, 1024, 2, 0],
     [0, 0, 2, 2],
   ]);
   const [hasMoved, setHasMoved] = useState(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
+  const [wonGame, setWonGame] = useState<boolean>(false);
 
   useEffect(() => {
     if (hasMoved) {
@@ -58,6 +63,10 @@ export default function Grid() {
   useEffect(() => {
     if (checkGameOver(grid)) {
       setGameOver(true);
+    }
+
+    if (checkWin(grid)) {
+      setWonGame(true);
     }
   }, [grid]);
 
@@ -212,6 +221,7 @@ export default function Grid() {
         ))}
       </div>
       {gameOver && <p>Game Over !</p>}
+      {wonGame && <p>You win !</p>}
     </div>
   );
 }
