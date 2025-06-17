@@ -2,6 +2,38 @@ import { useEffect, useState } from "react";
 import Title from "./Title";
 import { useSwipeable } from "react-swipeable";
 
+function canMove(grid: number[][]): boolean {
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (grid[row][col] === 0) {
+        return true;
+      }
+    }
+  }
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 3; col++) {
+      if (grid[row][col] === grid[row][col + 1]) {
+        return true;
+      }
+    }
+  }
+
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (grid[row][col] === grid[row + 1][col]) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function checkGameOver(grid: number[][]): boolean {
+  return !canMove(grid);
+}
+
 export default function Grid() {
   const [grid, setGrid] = useState<number[][]>([
     [4, 2, 4, 2],
@@ -10,6 +42,7 @@ export default function Grid() {
     [0, 0, 2, 2],
   ]);
   const [hasMoved, setHasMoved] = useState(false);
+  const [gameOver, setGameOver] = useState<boolean>(false);
 
   useEffect(() => {
     if (hasMoved) {
@@ -18,11 +51,18 @@ export default function Grid() {
     }
   }, [hasMoved]);
 
+  useEffect(() => {
+    if (checkGameOver(grid)) {
+      setGameOver(true);
+    }
+  }, [grid]);
+
   function generateNewTitle() {
     const newTitleValue = Math.floor(Math.random() * 10) + 1 === 10 ? 4 : 2;
 
     setGrid((prevGrid) => {
       const flatGrid = prevGrid.flat();
+      console.log("🚀 ~ setGrid ~ flatGrid:", flatGrid);
 
       const emptyIndexes = flatGrid
         .map((val, index) => (val === 0 ? index : -1))
@@ -160,6 +200,7 @@ export default function Grid() {
           <Title key={index} value={value} />
         ))}
       </div>
+      {gameOver && <p>Game Over !</p>}
     </div>
   );
 }
