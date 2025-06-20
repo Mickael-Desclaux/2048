@@ -44,14 +44,18 @@ function gridsAreEqual(grid1: number[][], grid2: number[][]): boolean {
 
 export default function Grid() {
   const [grid, setGrid] = useState<number[][]>([
-    [4, 2, 4, 2],
-    [0, 1024, 0, 0],
-    [0, 1024, 2, 0],
-    [0, 0, 2, 2],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
   ]);
   const [hasMoved, setHasMoved] = useState(false);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [wonGame, setWonGame] = useState<boolean>(false);
+
+  useEffect(() => {
+    startNewGame();
+  }, []);
 
   useEffect(() => {
     if (hasMoved) {
@@ -69,6 +73,20 @@ export default function Grid() {
       setWonGame(true);
     }
   }, [grid]);
+
+  function startNewGame() {
+    setGrid([
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ]);
+    setGameOver(false);
+    setWonGame(false);
+
+    generateNewTitle();
+    generateNewTitle();
+  }
 
   function generateNewTitle() {
     const newTitleValue = Math.floor(Math.random() * 10) + 1 === 10 ? 4 : 2;
@@ -211,17 +229,20 @@ export default function Grid() {
   });
 
   return (
-    <div
-      {...handlers}
-      className="flex justify-center cursor-pointer touch-none select-none"
-    >
-      <div className="grid grid-cols-4 gap-4 w-fit">
-        {grid.flat().map((value, index) => (
-          <Title key={index} value={value} />
-        ))}
+    <div>
+      <button onClick={startNewGame}>New game</button>
+      <div
+        {...handlers}
+        className="flex justify-center cursor-pointer touch-none select-none"
+      >
+        <div className="grid grid-cols-4 gap-4 w-fit">
+          {grid.flat().map((value, index) => (
+            <Title key={index} value={value} />
+          ))}
+        </div>
+        {gameOver && <p>Game Over !</p>}
+        {wonGame && <p>You win !</p>}
       </div>
-      {gameOver && <p>Game Over !</p>}
-      {wonGame && <p>You win !</p>}
     </div>
   );
 }
